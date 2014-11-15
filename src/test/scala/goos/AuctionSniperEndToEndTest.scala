@@ -1,0 +1,7 @@
+
+package goos
+
+class AuctionSniperEndToEndTest
+{
+
+}

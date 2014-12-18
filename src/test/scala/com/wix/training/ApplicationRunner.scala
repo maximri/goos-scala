@@ -1,13 +1,44 @@
 package com.wix.training
 
-/**
- * Created by maximribakov on 11/15/14.
- */
 class ApplicationRunner {
-  def showsSniperHasLostAuction() = ???
+  var driver: AuctionSniperDriver = _
 
-  def startBiddingIn(server: FakeAuctionServer) = ???
+  def startBiddingIn(auction: FakeAuctionServer) = {
+    val thread = new Thread(new Runnable {
+      override def run() {
+        new Main(ApplicationRunner.arguments(auction.getItemId): _*)
+      }
+    })
 
-  def stop(): Any = ???
+    thread.setDaemon(true)
+    thread.start()
 
+    driver = new AuctionSniperDriver(1000)
+    driver.showsSniperStatus(Main.STATUS_JOINING)
+  }
+
+
+  def showsSniperHasLostAuction() = {
+    driver.showsSniperStatus(Main.STATUS_LOST)
+  }
+
+  def stop(): Any = {
+    if (driver != null) {
+      driver.dispose()
+    }
+  }
 }
+
+
+object ApplicationRunner {
+  val SNIPER_ID = "sniper"
+  val SNIPER_PASSWORD = "sniper"
+
+  val XMPP_HOSTNAME = "localhost"
+  //  val SNIPER_XMPP_ID = SNIPER_ID + "@" + XMPP_HOSTNAME + "/Auction"
+
+  protected def arguments(auctionId: String): List[String] = XMPP_HOSTNAME :: SNIPER_ID :: SNIPER_PASSWORD :: auctionId :: Nil
+}
+
+
+

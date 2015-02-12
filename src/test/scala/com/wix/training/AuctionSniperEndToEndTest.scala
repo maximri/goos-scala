@@ -7,7 +7,7 @@ class AuctionSniperEndToEndTest extends SpecificationWithJUnit{
   sequential
 
   trait ctx extends Scope with After {
-    val auction = new FakeAuctionServer("item-54321")
+    val auction = new FakeAuctionServer("item_54321")
     val application = new ApplicationRunner
 
    override def after = {

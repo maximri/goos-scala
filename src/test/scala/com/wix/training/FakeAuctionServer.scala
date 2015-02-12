@@ -42,7 +42,7 @@ class FakeAuctionServer(itemId: String) {
 }
 
 object FakeAuctionServer{
-  val ITEM_ID_AS_LOGIN: String = "auction-%s"
+  val ITEM_ID_AS_LOGIN: String = "auction_%s"
   val AUCTION_RESOURCE: String = "Auction"
   val XMPP_HOSTNAME: String = "localhost"
   val AUCTION_PASSWORD: String = "auction"
@@ -57,8 +57,8 @@ class SingleMessageListener extends MessageListener with MustMatchers{
   }
 
   def receivesAMessage(): Unit = {
-    val msg: Message = messages.poll(5,TimeUnit.SECONDS)
-    msg must not beNull
+    val message: Message = messages.poll(5,TimeUnit.SECONDS)
+    message must not beNull
   }
 
 }

@@ -1,16 +1,26 @@
 package com.wix.training
 
-/**
- * Created by maximribakov on 12/7/14.
- */
-class Main(args: String*) {
+import javax.swing.SwingUtilities
 
+class Main(args: String*) {
+  var ui: MainWindow = _
+
+  startUserInterface
+
+  private def startUserInterface() = {
+    SwingUtilities.invokeAndWait(new Runnable {
+      override def run() {
+        ui = new MainWindow()
+      }
+    })
+  }
 }
+
 object Main {
 
-  val STATUS_JOINING = "joining"
+  val STATUS_JOINING = "Joining"
 
-  val SNIPER_STATUS_NAME = " sniper_status_name"
+  val SNIPER_STATUS_NAME = "sniper status"
 
   val STATUS_LOST = "lost"
 

@@ -26,16 +26,16 @@ class Main(args: String*) {
 
   def joinAuction(connection: XMPPConnection, itemID: String): Unit = {
     val chat: Chat = connection.getChatManager.createChat(
-      auctionId(itemID, connection),
-      new MessageListener {
-        override def processMessage(chat: Chat, message: Message): Unit = {
-          SwingUtilities.invokeLater(new Runnable {
-            override def run(): Unit = {
-              ui.showStatus(STATUS_LOST)
-            }
-          })
-        }
-      })
+                        auctionId(itemID, connection),
+                        new MessageListener {
+                          override def processMessage(chat: Chat, message: Message): Unit = {
+                            SwingUtilities.invokeLater(new Runnable {
+                              override def run(): Unit = {
+                                ui.showStatus(STATUS_LOST)
+                              }
+                            })
+                          }
+                        })
     notToBeGCD = chat
 
     chat.sendMessage(new Message())
@@ -43,6 +43,8 @@ class Main(args: String*) {
 }
 
 object Main {
+  val SNIPER_BIDDING = "Bidding"
+
 
   val STATUS_JOINING = "Joining"
   val SNIPER_STATUS_NAME = "sniper status"
@@ -64,6 +66,9 @@ private object XMPPConnection {
   val AUCTION_RESOURCE = "Auction"
   val ITEM_ID_AS_LOGIN = "auction_%s"
   val AUCTION_ID_FORMAT = ITEM_ID_AS_LOGIN + "@%s/" + AUCTION_RESOURCE
+
+  val JOIN_COMMAND_FORMAT = "SOLVersion: 1.1; Command: JOIN; "
+  val BID_COMMAND_FORMAT = "SOLVersion: 1.1; Command: BID; Price: %d;"
 
   def connection(hostName: String, username: String, password: String): XMPPConnection = {
     val connection: XMPPConnection = new XMPPConnection(hostName)

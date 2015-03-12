@@ -1,13 +1,15 @@
 package com.wix.training
 
-import java.util.concurrent.{TimeUnit, ArrayBlockingQueue}
+import java.util.concurrent.{ArrayBlockingQueue, TimeUnit}
 
 import com.wix.training.FakeAuctionServer._
 import org.jivesoftware.smack.packet.Message
 import org.jivesoftware.smack.{Chat, ChatManagerListener, XMPPConnection, _}
-import org.specs2.matcher.MustMatchers
+import org.specs2.matcher.{Matcher, MustMatchers}
 
-class FakeAuctionServer(itemId: String) {
+class FakeAuctionServer(itemId: String) extends MustMatchers{
+
+
   val connection = new XMPPConnection(XMPP_HOSTNAME)
   var currentChat: Chat = _
 
@@ -25,8 +27,8 @@ class FakeAuctionServer(itemId: String) {
     })
   }
 
-  def hasReceivedJoinRequestFromSniper() = {
-    messageListener.receivesAMessage
+  def reportPrice(price: Int, increment: Int, bidder: String) = {
+    currentChat.sendMessage(s"SQLVersion :1.1; Event: PRICE; CurrentPrice: $price; Increment: $increment; Bidder: $bidder")
   }
 
   def announceClosed() = {
@@ -36,6 +38,21 @@ class FakeAuctionServer(itemId: String) {
   def stop() = {
     connection.disconnect()
   }
+
+
+  def hasReceivedBid(bid: Int, sniperId: String) = {
+    recivesAMessageMatching(sniperId, equalTo(XMPPConnection.BID_COMMAND_FORMAT))
+    currentChat.getParticipant must be equalTo(sniperId)
+  }
+
+  def hasReceivedJoinRequestFromSniper(sniperId: String) = {
+    recivesAMessageMatching(sniperId, equalTo(XMPPConnection.JOIN_COMMAND_FORMAT))
+  }
+
+  private def recivesAMessageMatching(sniperId : String, messageMatcher : Matcher[String]) = {
+    messageListener.receivesAMessage(messageMatcher)
+  }
+
 
   def getItemId = itemId
 
@@ -50,15 +67,16 @@ object FakeAuctionServer{
 }
 
 class SingleMessageListener extends MessageListener with MustMatchers{
- private val messages: ArrayBlockingQueue[Message] = new ArrayBlockingQueue[Message](1)
+ private val messages = new ArrayBlockingQueue[Message](1)
 
-  override def processMessage(chat: Chat, message: Message): Unit = {
+  override def processMessage(chat: Chat, message: Message) = {
     messages.add(message)
   }
 
-  def receivesAMessage(): Unit = {
-    val message: Message = messages.poll(5,TimeUnit.SECONDS)
-    message must not beNull
+  def receivesAMessage(messageMatcher : Matcher[String]) = {
+    val message = messages.poll(5,TimeUnit.SECONDS)
+    message must not beNull;
+    message.getBody must messageMatcher
   }
 
 }

@@ -10,9 +10,9 @@ class MainWindow() extends JFrame(APP_TITLE) {
   private val sniperStatus: JLabel = createLabel(Main.STATUS_JOINING)
 
   setName(MAIN_WINDOW_NAME)
-  setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
   add(sniperStatus)
   pack()
+  setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
   setVisible(true)
 
 
@@ -31,7 +31,7 @@ class MainWindow() extends JFrame(APP_TITLE) {
 object MainWindow {
   val MAIN_WINDOW_NAME = "Auction Sniper Main"
   val APP_TITLE = "Auction Sniper"
-  val SNIPER_STATUS_NAME = "sniper-status"
+  val SNIPER_STATUS_NAME = "sniper status"
 }
 
 

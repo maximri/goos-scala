@@ -9,7 +9,6 @@ import org.specs2.matcher.{Matcher, MustMatchers}
 
 class FakeAuctionServer(itemId: String) extends MustMatchers{
 
-
   val connection = new XMPPConnection(XMPP_HOSTNAME)
   var currentChat: Chat = _
 
@@ -41,16 +40,16 @@ class FakeAuctionServer(itemId: String) extends MustMatchers{
 
 
   def hasReceivedBid(bid: Int, sniperId: String) = {
-    recivesAMessageMatching(sniperId, equalTo(XMPPConnection.BID_COMMAND_FORMAT))
-    currentChat.getParticipant must be equalTo(sniperId)
+    receivesAMessageMatching(sniperId, equalTo(XMPPConnection.BID_COMMAND_FORMAT))
   }
 
   def hasReceivedJoinRequestFromSniper(sniperId: String) = {
-    recivesAMessageMatching(sniperId, equalTo(XMPPConnection.JOIN_COMMAND_FORMAT))
+    receivesAMessageMatching(sniperId, equalTo(XMPPConnection.JOIN_COMMAND_FORMAT))
   }
 
-  private def recivesAMessageMatching(sniperId : String, messageMatcher : Matcher[String]) = {
+  private def receivesAMessageMatching(sniperId : String, messageMatcher : Matcher[String]) = {
     messageListener.receivesAMessage(messageMatcher)
+    currentChat.getParticipant must be equalTo(sniperId)
   }
 
 

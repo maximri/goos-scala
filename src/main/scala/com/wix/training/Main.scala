@@ -1,5 +1,6 @@
 package com.wix.training
 
+import java.awt.event.{WindowEvent, WindowAdapter}
 import javax.swing.SwingUtilities
 
 import com.wix.training.Main._
@@ -9,7 +10,7 @@ import org.jivesoftware.smack.{Chat, MessageListener, XMPPConnection}
 
 class Main(args: String*) {
   var ui: MainWindow = _
-  var notToBeGCD : Chat= _
+  var notToBeGCD: Chat = _
 
   startUserInterface()
   val auctionHouseConnection: XMPPConnection = XMPPConnection.connection(args(ARG_HOSTNAME), args(ARG_USERNAME), args(ARG_PASSWORD))
@@ -24,7 +25,16 @@ class Main(args: String*) {
     })
   }
 
+  private def disconnectWhenUICloses(connection: XMPPConnection) = {
+    ui.addWindowListener(new WindowAdapter {
+      override def windowClosed(e: WindowEvent): Unit = {
+        connection.disconnect()
+      }
+    })
+  }
+
   def joinAuction(connection: XMPPConnection, itemID: String): Unit = {
+    disconnectWhenUICloses(connection)
     val chat: Chat = connection.getChatManager.createChat(
                         auctionId(itemID, connection),
                         new MessageListener {
@@ -38,7 +48,7 @@ class Main(args: String*) {
                         })
     notToBeGCD = chat
 
-    chat.sendMessage(new Message())
+    chat.sendMessage(new Message(XMPPConnection.JOIN_COMMAND_FORMAT))
   }
 }
 

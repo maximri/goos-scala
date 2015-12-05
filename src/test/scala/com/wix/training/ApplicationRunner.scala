@@ -1,9 +1,6 @@
 package com.wix.training
 
 class ApplicationRunner {
-  def showsSniperIsBidding() = {
-    driver.showsSniperStatus(Main.SNIPER_BIDDING)
-  }
 
   var driver: AuctionSniperDriver = _
 
@@ -18,11 +15,15 @@ class ApplicationRunner {
     thread.start()
 
     driver = new AuctionSniperDriver(timeoutMillis = 1000)
-    driver.showsSniperStatus(Main.STATUS_JOINING)
+    driver.isShowingSniperStatus(Main.STATUS_JOINING)
   }
 
-  def showsSniperHasLostAuction() = {
-    driver.showsSniperStatus(Main.STATUS_LOST)
+  def hasShownSniperIsBidding() = {
+    driver.isShowingSniperStatus(Main.SNIPER_BIDDING)
+  }
+
+  def isShowingSniperHasLostAuction() = {
+    driver.isShowingSniperStatus(Main.STATUS_LOST)
   }
 
   def stop(): Any = {
@@ -34,11 +35,11 @@ class ApplicationRunner {
 
 
 object ApplicationRunner {
+  val XMPP_HOSTNAME = "localhost"
+
   val SNIPER_ID = "sniper"
   val SNIPER_PASSWORD = "sniper"
 
-  val XMPP_HOSTNAME = "localhost"
-  
   val SNIPER_XMPP_ID = SNIPER_ID + "@" + XMPP_HOSTNAME + "/Auction"
 
   protected def arguments(auctionId: String): List[String] = XMPP_HOSTNAME :: SNIPER_ID :: SNIPER_PASSWORD :: auctionId :: Nil

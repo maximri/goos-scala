@@ -13,7 +13,7 @@ class AuctionSniperDriver(timeoutMillis: Int) extends JFrameDriver(
     showingOnScreen()),
   new AWTEventQueueProber(timeoutMillis, 100)) {
 
-  def showsSniperStatus(statusText: String) = {
+  def isShowingSniperStatus(statusText: String) = {
     new JLabelDriver(
       this, named(Main.SNIPER_STATUS_NAME)).hasText(equalTo(statusText))
   }

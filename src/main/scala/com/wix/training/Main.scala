@@ -1,14 +1,14 @@
 package com.wix.training
 
-import java.awt.event.{WindowEvent, WindowAdapter}
+import java.awt.event.{WindowAdapter, WindowEvent}
 import javax.swing.SwingUtilities
 
 import com.wix.training.Main._
 import com.wix.training.XMPPConnection.AUCTION_ID_FORMAT
 import org.jivesoftware.smack.packet.Message
-import org.jivesoftware.smack.{Chat, MessageListener, XMPPConnection}
+import org.jivesoftware.smack.{Chat, XMPPConnection}
 
-class Main(args: String*) {
+class Main(args: String*) extends AuctionEventListener{
   var ui: MainWindow = _
   var notToBeGCD: Chat = _
 
@@ -36,19 +36,14 @@ class Main(args: String*) {
   def joinAuction(connection: XMPPConnection, itemID: String): Unit = {
     disconnectWhenUICloses(connection)
     val chat: Chat = connection.getChatManager.createChat(
-                        auctionId(itemID, connection),
-                        new MessageListener {
-                          override def processMessage(chat: Chat, message: Message): Unit = {
-                            SwingUtilities.invokeLater(new Runnable {
-                              override def run(): Unit = {
-                                ui.showStatus(STATUS_LOST)
-                              }
-                            })
-                          }
-                        })
+                        auctionId(itemID, connection), new AuctionMessageTranslator(this))
     notToBeGCD = chat
 
     chat.sendMessage(new Message(XMPPConnection.JOIN_COMMAND_FORMAT))
+  }
+
+  override def auctionClosed(): Unit = {
+    ui.showStatus(STATUS_LOST)
   }
 }
 

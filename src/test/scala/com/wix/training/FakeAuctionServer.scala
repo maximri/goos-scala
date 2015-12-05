@@ -31,7 +31,7 @@ class FakeAuctionServer(itemId: String) extends MustMatchers{
   }
 
   def announceClosed() = {
-    currentChat.sendMessage(new Message())
+    currentChat.sendMessage("SQLVersion: 1,1; Event: CLOSE;")
   }
 
   def stop() = {

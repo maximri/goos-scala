@@ -45,6 +45,9 @@ class Main(args: String*) extends AuctionEventListener{
   override def auctionClosed(): Unit = {
     ui.showStatus(STATUS_LOST)
   }
+
+  override def currentPrice(price: Int, increment: Int): Unit = {
+  }
 }
 
 object Main {
